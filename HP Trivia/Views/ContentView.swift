@@ -15,7 +15,9 @@ struct ContentView: View {
     @State private var scalePlayButton = false
     @State private var moveBackgroundImage = false
     @State private var animateViewsIn = false
-    
+    @State private var showInstructions = false
+    @State private var showSettings = false
+    @State private var playGame = false
     
     
     var body: some View {
@@ -93,6 +95,7 @@ struct ContentView: View {
                                 
                                 Button {
                                     // Show Instructions Screen
+                                    showInstructions.toggle()
                                 } label: {
                                     Image(systemName: "info.circle.fill")
                                         .font(.largeTitle)
@@ -100,6 +103,9 @@ struct ContentView: View {
                                         .shadow(radius: 5)
                                 }  // Button - Show Instructions
                                 .transition(.offset(x: -geo.size.width / 4))
+                                .fullScreenCover(isPresented: $showInstructions) {
+                                    Instructions()
+                                }  // .fullScreenCover
                                 
                             }  // if
                         }  // VStack
@@ -111,7 +117,7 @@ struct ContentView: View {
                             if animateViewsIn {
                                 
                                 Button {
-                                    // Start New Game
+                                    playGame.toggle()
                                 } label: {
                                     Text("Play")
                                         .font(.largeTitle)
@@ -129,6 +135,9 @@ struct ContentView: View {
                                     }  // withAnimation
                                 }  // .onAppear
                                 .transition(.offset(y: geo.size.height / 3))
+                                .fullScreenCover(isPresented: $playGame) {
+                                    GamePlay()
+                                }  // .fullScreenCover
                                 
                             }  // if
                         }  // VStack
@@ -140,7 +149,7 @@ struct ContentView: View {
                             if animateViewsIn {
                                 
                                 Button {
-                                    // Show Settings Screen
+                                    showSettings.toggle()
                                 } label: {
                                     Image(systemName: "gearshape.fill")
                                         .font(.largeTitle)
@@ -148,6 +157,9 @@ struct ContentView: View {
                                         .shadow(radius: 5)
                                 }  // Button - Settings Screen
                                 .transition(.offset(x: geo.size.width / 4))
+                                .fullScreenCover(isPresented: $showSettings) {
+                                    Settings()
+                                }  // .sheet
                                 
                             }  // if
                         }  // VStack

@@ -8,11 +8,195 @@
 import SwiftUI
 
 struct GamePlay: View {
+    @State private var animateViewsIn = false
+    @State private var tappedCorrectAnswer = false
+    
+    
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
-}
+        
+        GeometryReader { geo in
+            ZStack {
+                Image("hogwarts")
+                    .resizable()
+                    .frame(width: geo.size.width * 3, height: geo.size.height * 1.05)
+                    .overlay(Rectangle().foregroundColor(.black.opacity(0.8)))
+                
+                VStack {
+                    // MARK: Controls
+                    HStack {
+                        Button("End Game") {
+                            // TODO: End Game
+                        }  // Button - End Game
+                        .buttonStyle(.borderedProminent)
+                        .tint(.red.opacity(0.5))
+                        
+                        Spacer()
+                        
+                        Text("Score: 33")
+                                                    
+                    }  // HStack
+                    .padding()
+                    .padding(.vertical, 30)
+                    
+                    // MARK: Question
+                    VStack {
+                        if animateViewsIn {
+                            Text("Who is Harry Potter?")
+                                .font(.custom(Constants.hpFont, size: 50))
+                                .multilineTextAlignment(.center)
+                                .padding()
+                                .transition(.scale)
+                        }  // if
+                    }  // VStack
+                    .animation(.easeIn(duration: 2), value: animateViewsIn)
+                    
+                    Spacer()
+                    
+                    // MARK: Hints
+                    HStack {
+                        VStack {
+                            if animateViewsIn {
+                                Image(systemName: "questionmark.app.fill")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 100)
+                                    .foregroundColor(.cyan)
+                                    .rotationEffect(.degrees(-15))
+                                    .padding()
+                                    .padding(.leading, 20)
+                                    .transition(.offset(x: -geo.size.width / 2))
+                            }  // if
+                        }  // VStack
+                        .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
+                        
+                        Spacer()
+                        
+                        VStack {
+                            if animateViewsIn {
+                                Image(systemName: "book.closed")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 50)
+                                    .foregroundColor(.black)
+                                    .frame(width: 100, height: 100)
+                                    .background(.cyan)
+                                    .cornerRadius(20)
+                                    .rotationEffect(.degrees(15))
+                                    .padding()
+                                    .padding(.trailing, 20)
+                                    .transition(.offset(x: geo.size.width / 2))
+                            }  // if
+                        }  // VStack
+                        .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
+                        
+                    }  // HStack
+                    .padding(.bottom)
+                    
+                    // MARK: Answers
+                    LazyVGrid(columns: [GridItem(), GridItem()]) {
+                        ForEach(1..<5) { i in
+                            if animateViewsIn {
+                                Text(i == 3 ? "The boy who basically lived and got sent to his relatives house where he was treated quite badly if I'm being honest but yeah." : "Answer \(i)")
+                                    .minimumScaleFactor(0.5)
+                                    .multilineTextAlignment(.center)
+                                    .padding(10)
+                                    .frame(width: geo.size.width/2.15, height: 80)
+                                    .background(.green.opacity(0.5))
+                                    .cornerRadius(25)
+                                    .transition(.scale)
+                            }  // if
+                        }  // ForEach
+                    }  // LazyVGrid
+                    .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
+                    
+                    Spacer()
+                    
+                }  // VStack
+                .frame(width: geo.size.width, height: geo.size.height)
+                .foregroundColor(.white)
+                
+                // MARK: Celebration
+                VStack {
+                    
+                    Spacer()
+                    
+                    VStack {
+                        if tappedCorrectAnswer {
+                            Text("5")
+                                .font(.largeTitle)
+                                .padding(.top, 50)
+                                .transition(.offset(y: -geo.size.height / 4))
+                        } // if
+                    }  // VStack
+                    .animation(.easeIn(duration: 1).delay(2), value: tappedCorrectAnswer)
+                    
+                    Spacer()
+                    
+                    VStack {
+                        if tappedCorrectAnswer {
+                            Text("Brilliant!")
+                                .font(.custom(Constants.hpFont, size: 100))
+                                .transition(.scale.combined(with: .offset(y: -geo.size.height / 2)))
+                        }  // if
+                    }  // VStack
+                    .animation(.easeInOut(duration: 1).delay(1), value: tappedCorrectAnswer)
+                    
+                    Spacer()
+                    
+                    Text("Answer 1")
+                        .minimumScaleFactor(0.5)
+                        .multilineTextAlignment(.center)
+                        .padding(10)
+                        .frame(width: geo.size.width / 2.15, height: 80)
+                        .background(.green.opacity(0.5))
+                        .cornerRadius(24)
+                        .scaleEffect(2)
+                    
+                    Group {
+                        Spacer()
+                        Spacer()
+                    }  // Group
+                    
+                    VStack {
+                        if tappedCorrectAnswer {
+                            Button("Next Level >") {
+                                // TODO: Reset level for next question
+                            }  // Button - Next Level
+                            .buttonStyle(.borderedProminent)
+                            .tint(.blue.opacity(0.5))
+                            .font(.largeTitle)
+                            .transition(.offset(y: geo.size.height / 3))
+                        }  // if
+                    }  // VStack
+                    .animation(.easeInOut(duration: 2.7).delay(2.7), value: tappedCorrectAnswer)
+                    
+                    Group {
+                        Spacer()
+                        Spacer()
+                    }  // Group
+                    
+                }  // VStack
+                .foregroundColor(.white)
+                
+            }  // ZStack
+            .frame(width: geo.size.width, height: geo.size.height)
+            
+            
+        }  // GeometryReader
+        .ignoresSafeArea()
+        .onAppear {
+//          animateViewsIn = true
+            tappedCorrectAnswer = true
+        }  // .onAppear
+        
+    }  // some View
+    
+    
+}  // GamePlay
 
 #Preview {
-    GamePlay()
+    VStack {
+        GamePlay()
+    }
 }
