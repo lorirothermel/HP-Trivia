@@ -19,6 +19,7 @@ struct GamePlay: View {
     @State private var movePointsToScore = false
     @State private var revealHint = false
     @State private var revealBook = false
+    @State private var wrongAnswersTapped: [Int] = []
     
     let tempAnswers = [true, false, false, false]
     
@@ -58,6 +59,7 @@ struct GamePlay: View {
                                 .multilineTextAlignment(.center)
                                 .padding()
                                 .transition(.scale)
+                                .opacity(tappedCorrectAnswer ? 0.1 : 1)
                         }  // if
                     }  // VStack
                     .animation(.easeIn(duration: 2), value: animateViewsIn)
@@ -102,7 +104,8 @@ struct GamePlay: View {
                                             .opacity(revealHint ? 1.0 : 0)
                                             .scaleEffect(revealHint ? 1.33 : 1.0)
                                     )  // .overlay
-                                
+                                    .opacity(tappedCorrectAnswer ? 0.1 : 1)
+                                    .disabled(tappedCorrectAnswer)
                             }  // if
                         }  // VStack
                         .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
@@ -148,6 +151,8 @@ struct GamePlay: View {
                                             .opacity(revealBook ? 1.0 : 0)
                                             .scaleEffect(revealBook ? 1.33 : 1.0)
                                     )  // .overlay
+                                    .opacity(tappedCorrectAnswer ? 0.1 : 1)
+                                    .disabled(tappedCorrectAnswer)
                             }  // if
                         }  // VStack
                         .animation(.easeOut(duration: 1.5).delay(2), value: animateViewsIn)
@@ -188,9 +193,17 @@ struct GamePlay: View {
                                             .multilineTextAlignment(.center)
                                             .padding(10)
                                             .frame(width: geo.size.width/2.15, height: 80)
-                                            .background(.green.opacity(0.5))
+                                            .background(wrongAnswersTapped.contains(i) ? .red.opacity(0.5) : .green.opacity(0.5))
                                             .cornerRadius(25)
                                             .transition(.scale)
+                                            .onTapGesture {
+                                                withAnimation(.easeOut(duration: 1)) {
+                                                    wrongAnswersTapped.append(i)
+                                                }  // withAnimation
+                                            }  // .onTapGesture
+                                            .scaleEffect(wrongAnswersTapped.contains(i) ? 0.8 : 1)
+                                            .disabled(tappedCorrectAnswer || wrongAnswersTapped.contains(i))
+                                            .opacity(tappedCorrectAnswer ? 0.1 : 1)
                                     }  // if
                                 }  // VStack
                                 .animation(.easeOut(duration: 1).delay(1.5), value: animateViewsIn)
@@ -260,7 +273,17 @@ struct GamePlay: View {
                     VStack {
                         if tappedCorrectAnswer {
                             Button("Next Level >") {
-                                // TODO: Reset level for next question
+                                animateViewsIn = false
+                                tappedCorrectAnswer = false
+                                revealHint = false
+                                revealBook = false
+                                movePointsToScore = false
+                                wrongAnswersTapped = []
+                                
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                                    animateViewsIn = true
+                                }  // DispatchQueue
+                                
                             }  // Button - Next Level
                             .buttonStyle(.borderedProminent)
                             .tint(.blue.opacity(0.5))
