@@ -33,6 +33,9 @@ class Store: ObservableObject {
     func loadProducts() async {
         do {
             products = try await Product.products(for: productIDs)
+            products.sort {
+                $0.displayName < $1.displayName
+            }  // product.sort
         } catch {
             print("Couldn't fetch products: \(error.localizedDescription)")
         }  // do..catch
